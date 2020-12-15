@@ -44,6 +44,10 @@ h1 {
   margin: 0 auto;
 }
 
+#info {
+  color: black;
+}
+
 /*
     Media Queries to resize the Google Maps according to device width
 */

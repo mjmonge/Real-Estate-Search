@@ -157,8 +157,9 @@ function updateMap(stateNum, data, filter) {
     center: { lat: statesLocations[californiaNum][0], lng: statesLocations[californiaNum][1] }
   });
   
-  var infowindow = new google.maps.InfoWindow();
+  var info = new google.maps.InfoWindow();
   var markers = [];
+  var windowContents = [];
   var marker, i;
   // loop to populate the markers on the map from the parsed data and adding the info windows
   for (i = 0; i < data.length; i++) {  
@@ -170,8 +171,10 @@ function updateMap(stateNum, data, filter) {
 
     google.maps.event.addListener(marker, 'click', (function(marker, i) {
       return function() {
-        infowindow.setContent(data[i].Address);
-        infowindow.open(map1, marker);
+        var windowContent = `<p id='info'>${data[i].Address}, Price: $${data[i].ListPrice}</p>`;
+        windowContents.push(windowContent);
+        info.setContent(windowContent);
+        info.open(map1, marker);
       }
     })(marker, i));
   }
@@ -192,8 +195,8 @@ function updateMap(stateNum, data, filter) {
   var idx = 0;
   document.querySelectorAll('#listingTable tr td.listingAddress')
   .forEach(e => e.addEventListener("click", function() {
-    infowindow.setContent(e.innerHTML);
-    infowindow.open(map1, markers[idx]);
+    info.setContent(windowContents[idx]);
+    info.open(map1, markers[idx]);
     idx++;
   }));
 }
