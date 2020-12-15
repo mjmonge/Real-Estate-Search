@@ -11,4 +11,4 @@ Using the development API the data was based in California so this app defaults 
 This site queries the Bridge API to retrieve and display property information and statistics on the site and displays the properties on a Google Map. Even though this API only has locations based in California this site is applicable to display properties accross the whole United States with the proper data.
 
 # Technology Used
-HTML/CSS/JavaScript/jQuery
+HTML/CSS/JavaScript/jQuery/Bridge API/Google Maps Javascript API
