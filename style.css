@@ -1,3 +1,98 @@
 body {
   text-align: center;
+  font-family: Courier, Arial, Helvetica;
+  color: white;
+  margin: 0;
+  background: cover;
+  background-color: #ffcc00;
+  font-weight: bold;
+}
+
+nav {
+  display: flex;
+  flex-wrap: column wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+nav p {
+  padding-left: 10px;
+}
+
+nav a {
+  color: blue;
+}
+
+nav p {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+p, label, td {
+  font-size: 14px;
+  color: white;
+}
+
+h1 {
+  color: blue;
+}
+
+#map1 {
+  width: 400px;
+  height: 400px;
+  margin: 0 auto;
+}
+
+/*
+    Media Queries to resize the Google Maps according to device width
+*/
+@media only screen and (min-width: 200px){
+  /* Set the size of the div element that contains the map */
+  #map1 {
+    height: 175px;
+    /* The height is 175 pixels */
+    width: 175px;
+    /* The width is 175 pixels */
+  }
+}
+
+
+/*
+    Media Queries to resize the Google Maps according to device width
+*/
+@media only screen and (min-width: 250px){
+/* Set the size of the div element that contains the map */
+  #map1 {
+    height: 225px;
+    /* The height is 225 pixels */
+    width: 225x;
+    /* The width is 225 pixels */
+  }
+}
+
+/*
+    Media Queries to resize the Google Maps according to device width
+*/
+@media only screen and (min-width: 300px){
+/* Set the size of the div element that contains the map */
+  #map1 {
+    height: 275px;
+    /* The height is 275 pixels */
+    width: 275px;
+    /* The width is 275 pixels */
+  }
+}
+
+/*
+    Media Queries to resize the Google Maps according to device width
+*/
+@media only screen and (min-width: 350px){
+/* Set the size of the div element that contains the map */
+  #map1 {
+    height: 325px;
+    /* The height is 325 pixels */
+    width: 325px;
+    /* The width is 325 pixels */
+  }
 }

@@ -1,10 +1,11 @@
 'use strict';
 
+// array of coordinates of each state to help the map focus on the right state when searched
 var statesLocations = [[32.318230, -86.902298], [66.160507, -153.369141], [34.048927, -111.093735], [34.799999, -92.199997], [33.981711, -118.197939], [39.113014, -105.358887], [41.599998, -72.699997], [39.000000, -75.500000], [27.994402, -81.760254], [33.247875, -83.441162], [19.741755, -155.844437], [44.068203, -114.74204], [40.000000, -89.000000], [40.273502, -86.126976], [42.032974, -93.581543], [38.500000, -98.000000], [37.839333, -84.270020], [30.391830, -92.329102], [45.367584, -68.972168], [39.045753, -76.641273], [42.407211, -71.382439], [44.182205, -84.506836], [46.392410, -94.636230], [33.000000, -90.000000], [38.573936, -92.603760], [46.965260, -109.533691], [41.500000, -100.000000], [39.876019, -117.224121], [44.000000, -71.500000], [39.833851, -74.871826], [34.307144, -106.018066], [43.000000, -75.000000], [35.782169, -80.793457], [47.650589, -100.437012], [40.367474, -82.996216], [36.084621, -96.921387], [44.000000, -120.500000], [41.203323, -77.194527], [41.700001, -71.500000], [33.836082, -81.163727], [44.500000, -100.000000], [35.860119, -86.660156], [31.000000, -100.000000], [39.419220, -111.950684], [44.000000, -72.699997], [37.926868, -78.024902], [47.751076, -120.740135], [39.000000, -80.500000], [44.500000, -89.500000], [43.075970, -107.290283]];
+// corresponding index to the current state
 var stateIdx=0;
-var newParsedData = [];
 
-// Method to populate content in the Google Map Divs
+// Method to populate content in the Google Map Divs, default content in google map
 function initMap() {
   // The location of West Town in Chicago
   const chicagoWestTown = { lat: 41.896, lng: -87.665 };
@@ -21,7 +22,9 @@ function initMap() {
   });
 }
 
+// method called when the page loads, contains user input validation, searhcing functionality, and saved search functionality
 function searchForm() {
+  // when the focus is lost verify the input
   $('.stateSearch').focusout(function() {
     var input = $('.stateSearch').val().toLowerCase();
     var statesLong = ['alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut', 'delaware', 'florida', 'georgia', 'hawaii', 'idaho', 'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana', 'maine', 'maryland', 'massachusetts', 'michigan', 'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 'new hampshire', 'new jersey', 'new mexico', 'new york', 'north carolina', 'north dakota', 'ohio', 'oklahoma', 'oregon', 'pennsylvania', 'rhode island', 'south carolina', 'south dakota', 'tennessee', 'texas', 'utah', 'vermont', 'virginia', 'washington', 'west virginia', 'wisconsin', 'wyoming'];
@@ -39,16 +42,19 @@ function searchForm() {
         break;
       }
     }
+    // if the input is not validated inform the user
     if (!found) {
       document.getElementById("validationMsg").innerHTML = "Please enter a valid U.S. State or State abbrevation."
     } else {
       document.getElementById("validationMsg").innerHTML = "";
     }
   })
+  // if the input is valid execute the search
   $('.searchForm').on('submit', function() {
     event.preventDefault();
     lookupProperties(false);
   })
+  // if the user clicked on the saved search then load the saved search and the reset button in the nav
   $('#searchP').on('click', function () {
     lookupProperties(true, "california");
     var nav = document.getElementById("nav").innerHTML;
@@ -60,11 +66,12 @@ function searchForm() {
       document.getElementById("statsDiv").style.display = "none";
       document.getElementById("mapDiv").style.display = "none";
     })
-    console.log(nav);
   })
 }
 
+// fucntion to lookup properties available and loading statistical data as well
 function lookupProperties(filter, state) {
+  // code to determine the url to fetch
   const searchState = state || $('.stateSearch').val().toLowerCase();
   const baseUrl = 'https://api.bridgedataoutput.com/api/v2/OData/test/Property?access_token='
   const stateFilter = `&$top=50&$filter=tolower(StateOrProvince) eq '${searchState}'`;
@@ -74,12 +81,12 @@ function lookupProperties(filter, state) {
 
     const url = baseUrl + apiKey + stateFilter;
 
+    // async functionality to fetch the data from the url and parse it
     fetch(url)
     .then(response => {
       if (response.ok) {
         return response.json();
       }
-        //console.log(response.status);
         return response.text();
         throw new Error(response.statusText);
     })
@@ -98,8 +105,7 @@ function lookupProperties(filter, state) {
             DaysOnMarket: entry.DaysOnMarket
           };
         });
-      console.log(parsedData);
-      //lookupCoords(stateIdx, parsedData);
+      // functionality to determine the next step after the data is acquired
       if(document.getElementById('propertySearch').checked & !filter) {
         updateMap(stateIdx, parsedData, false);
       } else if(document.getElementById('statSearch').checked & !filter) {
@@ -114,7 +120,9 @@ function lookupProperties(filter, state) {
     });
 }
 
+// function to display the stats at the bottom of the page
 function displayStats(parsedData, filter) {
+  // code to average the stats
   var listPriceAvg = parsedData.reduce((total, next) => total + next.ListPrice, 0) / parsedData.length;
   listPriceAvg = Math.round(listPriceAvg);
   var lotSizeAvg = parsedData.reduce((total, next) => total + next.LotSize, 0) / parsedData.length;
@@ -129,7 +137,9 @@ function displayStats(parsedData, filter) {
   var domAvg = parsedData.reduce((total, next) => total + next.DaysOnMarket, 0) / parsedData.length;
   domAvg = Math.round(domAvg);
   var stats = `<p>The average list price of the properties is $${listPriceAvg}.</p><p>The average lot size of the properties is ${lotSizeAvg} sq ft.</p><p>The average amount of bedrooms in the properties is ${bedroomAvg}.</p><p>The average amount of bathrooms in the properties is ${bathroomAvg}.</p><p>The average year the properties were built was ${yearBuiltAvg}.</p><p>The average days on the market for all the properties is ${domAvg}.</p>`;
+  // displaying stats on page
   document.getElementById("stats").innerHTML = stats;
+  // code to switch between map and stats if applicable
   if(!filter) {
     document.getElementById("statsDiv").style.display = "block";
     document.getElementById("mapDiv").style.display = "none";
@@ -138,42 +148,7 @@ function displayStats(parsedData, filter) {
   }
 }
 
-function lookupCoords(stateIdx, parsedData) {
-  const baseUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
-  var i = 0;
-  parsedData.forEach(entry => {
-    var addr = "";
-    addr = entry.Address;
-    addr = addr.split(" ");
-    addr = addr.slice(1, addr.length-1).join("+");
-    console.log(addr);
-    const address = `?address=${addr}`
-    const apiKey = '&key=AIzaSyBi9H4ld2QuWMIrFxZtv5CMw_Pk67Wb_6U';
-    const url = baseUrl + address + apiKey;
-    fetch(url)
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      return response.text();
-      throw new Error(response.statusText);
-    })
-    .then(responseJson => {
-      entry.Longitude = responseJson.results[0].geometry.location.lng;
-      entry.Latitude = responseJson.results[0].geometry.location.lat;
-      i++;
-      if(i==parsedData.length) {
-        console.log(parsedData);
-        updateMap(stateIdx, parsedData);
-      }
-    })
-    .catch(err => {
-      console.error(err);
-    })
-  })
-}
-
-// Method to populate content in the Google Map Divs
+// Method to populate properties in the Google Map Divs and listings in the listing table
 function updateMap(stateNum, data, filter) {
   // test data only exists in california so california is hardcoded in
   const californiaNum = 4;
@@ -185,10 +160,8 @@ function updateMap(stateNum, data, filter) {
   var infowindow = new google.maps.InfoWindow();
   var markers = [];
   var marker, i;
-
+  // loop to populate the markers on the map from the parsed data and adding the info windows
   for (i = 0; i < data.length; i++) {  
-    //console.log("creating marker and address " + JSON.stringify(data[i]));
-
     marker = new google.maps.Marker({
       position: {lat: data[i].Latitude, lng: data[i].Longitude},
       map: map1
@@ -197,18 +170,19 @@ function updateMap(stateNum, data, filter) {
 
     google.maps.event.addListener(marker, 'click', (function(marker, i) {
       return function() {
-        //console.log("loading info window");
         infowindow.setContent(data[i].Address);
         infowindow.open(map1, marker);
       }
     })(marker, i));
   }
+  // logic to determine whether or not to hide the stats
   if(!filter) {
     document.getElementById("mapDiv").style.display = "block";
     document.getElementById("statsDiv").style.display = "none";
   } else {
     document.getElementById("mapDiv").style.display = "block";
   }
+  // code to generate listing table and add functionality to focus on the marker corresponding to the address if clicked on
   var listingEntries = "";
   for(var i=0; i<data.length;i++) {
     listingEntries += `<tr><td class='listingAddress'>${data[i].Address}</td><td>${data[i].ListPrice}</td></tr>`;
