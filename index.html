@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
 	  <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,13 +23,13 @@
     </div>
     <br><br>
     <form class="searchForm">
-      <label>Enter a State to search for: </label>
+      <label for="stateSearch">Enter a State to search for: </label>
       <input class="stateSearch" id="stateSearch" />
       <p id="validationMsg"></p>
       <input type="radio" name="searchType" id="propertySearch" checked>
-      <label>Properties</label><br>
+      <label for="propertySearch">Properties</label><br>
       <input type="radio" name="searchType" id="statSearch">
-      <label>Statistics</label><br>
+      <label for="statSearch">Statistics</label><br>
       <input type="submit" value="Search"/>
     </form>
     <div id="mapDiv" style="display:none;">

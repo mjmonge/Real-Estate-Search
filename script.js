@@ -43,16 +43,19 @@ function searchForm() {
       }
     }
     // if the input is not validated inform the user
+    var warning = document.getElementById("validationMsg");
     if (!found) {
-      document.getElementById("validationMsg").innerHTML = "Please enter a valid U.S. State or State abbrevation."
+      warning.innerHTML = "Please enter a valid U.S. State or State abbrevation."
     } else {
-      document.getElementById("validationMsg").innerHTML = "";
+      warning.innerHTML = "";
     }
   })
   // if the input is valid execute the search
-  $('.searchForm').on('submit', function() {
+  $('.searchForm').on('submit', function(event) {
     event.preventDefault();
-    lookupProperties(false);
+    if(document.getElementById("validationMsg").innerHTML == "") {
+      lookupProperties(false);
+    }
   })
   // if the user clicked on the saved search then load the saved search and the reset button in the nav
   $('#searchP').on('click', function () {
@@ -107,11 +110,11 @@ function lookupProperties(filter, state) {
         });
       // functionality to determine the next step after the data is acquired
       if(document.getElementById('propertySearch').checked & !filter) {
-        updateMap(stateIdx, parsedData, false);
+        updateMap(parsedData, false);
       } else if(document.getElementById('statSearch').checked & !filter) {
         displayStats(parsedData, false);
       } else {
-        updateMap(stateIdx, parsedData, true);
+        updateMap(parsedData, true);
         displayStats(parsedData, true);
       }
     })
@@ -149,7 +152,7 @@ function displayStats(parsedData, filter) {
 }
 
 // Method to populate properties in the Google Map Divs and listings in the listing table
-function updateMap(stateNum, data, filter) {
+function updateMap(data, filter) {
   // test data only exists in california so california is hardcoded in
   const californiaNum = 4;
   const map1 = new google.maps.Map(document.getElementById("map1"), {
